@@ -1,0 +1,37 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+outputs/
+temp/
+*.egg-info/
+dist/
+build/
+.DS_Store
+.pytest_cache/
+*.log
+.env
+
+# Real-ESRGAN local backend (optional; not bundled)
+Real-ESRGAN/
+realesrgan-ncnn-vulkan
+realesrgan-ncnn-vulkan.exe
+
+# Model weight files (PyTorch / NCNN)
+*.pth
+*.param
+*.bin
+weights/
+models/
+
+# OS / editor noise
+Thumbs.db
+*.swp
+*.swo
+
+# Test coverage
+.coverage
+htmlcov/
+coverage.xml
