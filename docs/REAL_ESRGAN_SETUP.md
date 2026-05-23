@@ -10,12 +10,32 @@ At startup, pixctl probes for a backend in this priority order:
 
 | Priority | Path checked | Backend kind |
 |----------|--------------|--------------|
-| 1 | `realesrgan-ncnn-vulkan` in `$PATH` | ncnn-vulkan binary |
-| 2 | `./realesrgan-ncnn-vulkan` (project root) | ncnn-vulkan binary |
-| 3 | `./Real-ESRGAN/realesrgan-ncnn-vulkan` | ncnn-vulkan binary |
-| 4 | `./Real-ESRGAN/inference_realesrgan.py` | Python script |
+| 0 | UI path field (user-supplied path) | auto (`.py` → Python, otherwise ncnn) |
+| 1 | `$REAL_ESRGAN_PATH` environment variable (when set) | auto (`.py` → Python, otherwise ncnn) |
+| 2 | `realesrgan-ncnn-vulkan` in `$PATH` | ncnn-vulkan binary |
+| 3 | `./realesrgan-ncnn-vulkan` (project root) | ncnn-vulkan binary |
+| 4 | `./Real-ESRGAN/realesrgan-ncnn-vulkan` | ncnn-vulkan binary |
+| 5 | `./Real-ESRGAN/inference_realesrgan.py` | Python script |
 
 The first match wins. If none is found, the Upscale tab loads but the Run button is disabled and the header badge reads **No backend**.
+
+### REAL_ESRGAN_PATH override
+
+Set this environment variable to point directly at a binary or script to skip auto-detection:
+
+```bash
+# ncnn binary
+REAL_ESRGAN_PATH=/opt/realesrgan/realesrgan-ncnn-vulkan pixctl
+
+# Python script
+REAL_ESRGAN_PATH=/opt/realesrgan/inference_realesrgan.py pixctl
+```
+
+If the path does not exist, a warning is printed to the terminal and auto-detection continues normally.
+
+### Venv detection for the Python script backend
+
+When `./Real-ESRGAN/inference_realesrgan.py` is selected (priority 5), pixctl looks for a virtual environment at `./Real-ESRGAN/.venv/bin/python` and uses it automatically. If the venv is absent, the system Python interpreter is used and a warning is printed to the terminal.
 
 ---
 
@@ -44,6 +64,8 @@ The `realesrgan-ncnn-vulkan` binary uses Vulkan for GPU acceleration. It is the 
 The Python script backend uses PyTorch. It supports face enhancement via GFPGAN but requires additional dependencies installed separately.
 
 **Steps:**
+
+**Option B1 — Next to the pixctl project root:**
 
 1. Clone or download the Real-ESRGAN Python repository so that the project root contains a directory named `Real-ESRGAN`:
 

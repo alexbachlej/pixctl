@@ -19,17 +19,27 @@ Real-ESRGAN/
 realesrgan-ncnn-vulkan
 realesrgan-ncnn-vulkan.exe
 
-# Model weight files (PyTorch / NCNN)
+# Model weight files (PyTorch / NCNN / ONNX / safetensors)
+*.pt
 *.pth
+*.onnx
+*.pkl
 *.param
 *.bin
+*.safetensors
 weights/
 models/
+
+# Temp working directories
+tmp/
 
 # OS / editor noise
 Thumbs.db
 *.swp
 *.swo
+
+# Local user config (Real-ESRGAN path etc.) — machine-specific, not committed
+.pixctl.local.json
 
 # Test coverage
 .coverage

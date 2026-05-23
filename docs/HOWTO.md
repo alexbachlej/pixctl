@@ -96,6 +96,37 @@ Press **Ctrl+C** in the terminal where `./start.sh` is running. The Gradio serve
 
 ---
 
+## Port Configuration
+
+pixctl binds to `127.0.0.1:7860` by default. If port 7860 is already occupied by another process, pixctl automatically scans upward (7861, 7862, …) and uses the first free port. The chosen URL is always printed at startup:
+
+```
+pixctl running at:
+  http://127.0.0.1:7861
+```
+
+### Fix the port with an environment variable
+
+Set `PIXCTL_PORT` (highest priority) or `GRADIO_SERVER_PORT` before running:
+
+```bash
+PIXCTL_PORT=8080 pixctl
+PIXCTL_PORT=8080 ./start.sh
+```
+
+If the specified port is also busy, the same automatic fallback scan applies from that port.
+
+### Disable automatic browser open
+
+Gradio opens the default browser on startup. To suppress this:
+
+```bash
+PIXCTL_OPEN_BROWSER=0 pixctl
+PIXCTL_OPEN_BROWSER=0 ./start.sh
+```
+
+---
+
 ## How to Update Dependencies
 
 `start.sh` runs `pip install -r requirements.txt` on every launch, so it picks up new pinned versions automatically when `requirements.txt` is updated.

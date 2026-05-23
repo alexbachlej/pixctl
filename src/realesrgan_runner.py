@@ -1,3 +1,4 @@
+import os
 import shutil
 import subprocess
 import sys
@@ -8,6 +9,7 @@ from typing import Optional
 
 from src.config import BASE_DIR
 
+_DEBUG = os.environ.get("PIXCTL_DEBUG") == "1"
 
 @dataclass
 class Backend:
@@ -15,6 +17,8 @@ class Backend:
     path: Path
     available: bool
     supports_face_enhance: bool
+    python_exe: Optional[Path] = field(default=None)
+    cwd: Optional[Path] = field(default=None)
 
 
 @dataclass
@@ -27,29 +31,184 @@ class RunResult:
     output_path: Optional[Path] = field(default=None)
 
 
-def detect_backend() -> Backend:
+def detect_backend(user_path: str | None = None) -> Backend:
     """Probe for Real-ESRGAN backends in priority order."""
-    # 1. realesrgan-ncnn-vulkan in PATH
+    # A. User-provided path (UI input)
+    if user_path:
+        p = Path(user_path).resolve()
+        if p.is_file():
+            if p.suffix == ".py":
+                venv_py = p.parent / ".venv" / "bin" / "python"
+                python_exe = venv_py if venv_py.exists() else Path(sys.executable)
+                if _DEBUG:
+                    print("Backend source: UI path")
+                    print(f"Backend type:   python")
+                    print(f"Backend path:   {p}")
+                    print(f"Backend cwd:    {p.parent}")
+                    print(f"Python exe:     {python_exe}")
+                return Backend(kind="python", path=p, available=True,
+                               supports_face_enhance=True, python_exe=python_exe,
+                               cwd=p.parent)
+            else:
+                if _DEBUG:
+                    print("Backend source: UI path")
+                    print(f"Backend type:   ncnn")
+                    print(f"Backend path:   {p}")
+                    print(f"Backend cwd:    N/A")
+                    print(f"Python exe:     N/A")
+                return Backend(kind="ncnn", path=p, available=True,
+                               supports_face_enhance=False)
+        elif p.is_dir():
+            py_script = p / "inference_realesrgan.py"
+            ncnn_bin = p / "realesrgan-ncnn-vulkan"
+            if py_script.exists():
+                venv_py = p / ".venv" / "bin" / "python"
+                python_exe = venv_py if venv_py.exists() else Path(sys.executable)
+                if _DEBUG:
+                    print("Backend source: UI path (directory)")
+                    print(f"Backend type:   python")
+                    print(f"Backend path:   {py_script}")
+                    print(f"Backend cwd:    {p}")
+                    print(f"Python exe:     {python_exe}")
+                return Backend(kind="python", path=py_script, available=True,
+                               supports_face_enhance=True, python_exe=python_exe,
+                               cwd=p)
+            if ncnn_bin.exists():
+                if _DEBUG:
+                    print("Backend source: UI path (directory)")
+                    print(f"Backend type:   ncnn")
+                    print(f"Backend path:   {ncnn_bin}")
+                    print(f"Backend cwd:    N/A")
+                    print(f"Python exe:     N/A")
+                return Backend(kind="ncnn", path=ncnn_bin, available=True,
+                               supports_face_enhance=False)
+        else:
+            if _DEBUG:
+                print(f"WARNING: UI-provided path {user_path!r} does not exist — "
+                      "falling back to auto-detection.")
+
+    # B. Explicit override via REAL_ESRGAN_PATH environment variable
+    env_path_str = os.environ.get("REAL_ESRGAN_PATH")
+    if env_path_str:
+        p = Path(env_path_str)
+        if p.exists():
+            if p.is_dir():
+                py_script = p / "inference_realesrgan.py"
+                ncnn_bin = p / "realesrgan-ncnn-vulkan"
+                if py_script.exists():
+                    venv_py = p / ".venv" / "bin" / "python"
+                    python_exe = venv_py if venv_py.exists() else Path(sys.executable)
+                    if _DEBUG:
+                        print("Backend source: REAL_ESRGAN_PATH env var (directory)")
+                        print(f"Backend type:   python")
+                        print(f"Backend path:   {py_script}")
+                        print(f"Backend cwd:    {p}")
+                        print(f"Python exe:     {python_exe}")
+                    return Backend(kind="python", path=py_script, available=True,
+                                   supports_face_enhance=True, python_exe=python_exe,
+                                   cwd=p)
+                if ncnn_bin.exists():
+                    if _DEBUG:
+                        print("Backend source: REAL_ESRGAN_PATH env var (directory)")
+                        print(f"Backend type:   ncnn")
+                        print(f"Backend path:   {ncnn_bin}")
+                        print(f"Backend cwd:    N/A")
+                        print(f"Python exe:     N/A")
+                    return Backend(kind="ncnn", path=ncnn_bin, available=True,
+                                   supports_face_enhance=False)
+                if _DEBUG:
+                    print(f"WARNING: REAL_ESRGAN_PATH={env_path_str!r} is a directory but contains neither "
+                          "inference_realesrgan.py nor realesrgan-ncnn-vulkan — falling back to auto-detection.")
+            elif p.suffix == ".py":
+                venv_py = p.parent / ".venv" / "bin" / "python"
+                python_exe = venv_py if venv_py.exists() else Path(sys.executable)
+                if _DEBUG:
+                    print("Backend source: REAL_ESRGAN_PATH env var")
+                    print(f"Backend type:   python")
+                    print(f"Backend path:   {p}")
+                    print(f"Backend cwd:    {p.parent}")
+                    print(f"Python exe:     {python_exe}")
+                return Backend(kind="python", path=p, available=True,
+                               supports_face_enhance=True, python_exe=python_exe,
+                               cwd=p.parent)
+            else:
+                if _DEBUG:
+                    print("Backend source: REAL_ESRGAN_PATH env var")
+                    print(f"Backend type:   ncnn")
+                    print(f"Backend path:   {p}")
+                    print(f"Backend cwd:    N/A")
+                    print(f"Python exe:     N/A")
+                return Backend(kind="ncnn", path=p, available=True,
+                               supports_face_enhance=False)
+        if _DEBUG:
+            print(f"WARNING: REAL_ESRGAN_PATH={env_path_str!r} does not exist — "
+                  "falling back to auto-detection.")
+
+    # C. realesrgan-ncnn-vulkan in PATH
     which = shutil.which("realesrgan-ncnn-vulkan")
     if which:
+        if _DEBUG:
+            print("Backend source: PATH")
+            print(f"Backend type:   ncnn")
+            print(f"Backend path:   {which}")
+            print(f"Backend cwd:    N/A")
+            print(f"Python exe:     N/A")
         return Backend(kind="ncnn", path=Path(which), available=True, supports_face_enhance=False)
 
-    # 2. ./realesrgan-ncnn-vulkan (local binary next to project root)
+    # D. ./realesrgan-ncnn-vulkan (local binary next to project root)
     local_ncnn = BASE_DIR / "realesrgan-ncnn-vulkan"
     if local_ncnn.exists():
+        if _DEBUG:
+            print("Backend source: BASE_DIR local binary")
+            print(f"Backend type:   ncnn")
+            print(f"Backend path:   {local_ncnn}")
+            print(f"Backend cwd:    N/A")
+            print(f"Python exe:     N/A")
         return Backend(kind="ncnn", path=local_ncnn, available=True, supports_face_enhance=False)
 
-    # 3. ./Real-ESRGAN/realesrgan-ncnn-vulkan
+    # E. ./Real-ESRGAN/realesrgan-ncnn-vulkan
     nested_ncnn = BASE_DIR / "Real-ESRGAN" / "realesrgan-ncnn-vulkan"
     if nested_ncnn.exists():
+        if _DEBUG:
+            print("Backend source: BASE_DIR/Real-ESRGAN ncnn binary")
+            print(f"Backend type:   ncnn")
+            print(f"Backend path:   {nested_ncnn}")
+            print(f"Backend cwd:    N/A")
+            print(f"Python exe:     N/A")
         return Backend(kind="ncnn", path=nested_ncnn, available=True, supports_face_enhance=False)
 
-    # 4. ./Real-ESRGAN/inference_realesrgan.py (Python script backend)
+    # F. ./Real-ESRGAN/inference_realesrgan.py (Python script backend)
     inference_py = BASE_DIR / "Real-ESRGAN" / "inference_realesrgan.py"
     if inference_py.exists():
-        return Backend(kind="python", path=inference_py, available=True, supports_face_enhance=True)
+        venv4 = inference_py.parent / ".venv" / "bin" / "python"
+        if venv4.exists():
+            py4: Path = venv4
+        else:
+            if _DEBUG:
+                print(
+                    f"WARNING: Real-ESRGAN venv not found at {venv4} — "
+                    "using system Python interpreter."
+                )
+            py4 = Path(sys.executable)
+        if _DEBUG:
+            print("Backend source: BASE_DIR/Real-ESRGAN Python script")
+            print(f"Backend type:   python")
+            print(f"Backend path:   {inference_py}")
+            print(f"Backend cwd:    {inference_py.parent}")
+            print(f"Python exe:     {py4}")
+        return Backend(kind="python", path=inference_py, available=True,
+                       supports_face_enhance=True, python_exe=py4,
+                       cwd=inference_py.parent)
 
     return Backend(kind="none", path=Path(), available=False, supports_face_enhance=False)
+
+
+# Map pixctl internal model IDs to inference_realesrgan.py --model_name values.
+_MODEL_NAME_MAP = {
+    "realesrgan-x4plus": "RealESRGAN_x4plus",
+    "realesrgan-x4plus-anime": "RealESRGAN_x4plus_anime_6B",
+    "realesr-animevideov3": "realesr-animevideov3",
+}
 
 
 def _build_command(
@@ -69,14 +228,22 @@ def _build_command(
             "-s", str(scale),
         ]
     if backend.kind == "python":
-        # inference_realesrgan.py writes to an output directory, not a file path
+        # inference_realesrgan.py writes to an output directory, not a file path.
+        # Pass --suffix "" so the output filename is {stem}.{ext} (no _out suffix),
+        # making it easy to locate after inference.
+        interpreter = str(backend.python_exe) if backend.python_exe else sys.executable
+        mapped_model = _MODEL_NAME_MAP.get(model, model)
+        ext = output_path.suffix.lstrip(".") or "png"
         cmd = [
-            sys.executable,
+            interpreter,
             str(backend.path),
-            "-n", model,
+            "-n", mapped_model,
             "-i", str(input_path),
             "-o", str(output_path.parent),
-            "--outscale", str(scale),
+            "-s", str(scale),
+            "--fp32",
+            "--ext", ext,
+            "--suffix", "",
         ]
         if face_enhance:
             cmd.append("--face_enhance")
@@ -107,16 +274,27 @@ def run_upscale(
         )
 
     if face_enhance and not backend.supports_face_enhance:
-        print(
-            f"WARNING: face_enhance requested but not supported by '{backend.kind}' "
-            "backend — continuing without it."
-        )
+        if _DEBUG:
+            print(
+                f"WARNING: face_enhance requested but not supported by '{backend.kind}' "
+                "backend — continuing without it."
+            )
         face_enhance = False
 
     cmd = _build_command(backend, input_path, output_path, model, scale, face_enhance)
+    cwd = str(backend.cwd) if backend.cwd else None
     t0 = time.monotonic()
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True)
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd, timeout=1800)
+    except subprocess.TimeoutExpired:
+        duration = time.monotonic() - t0
+        return RunResult(
+            success=False,
+            stdout="",
+            stderr="Upscale process timed out after 300s.",
+            returncode=-1,
+            duration=duration,
+        )
     except FileNotFoundError as exc:
         duration = time.monotonic() - t0
         return RunResult(
@@ -128,10 +306,11 @@ def run_upscale(
         )
     duration = time.monotonic() - t0
 
-    # For the python backend the script writes to output_dir/input_filename.
-    # Rename it to the caller-specified output_path if they differ.
+    # For the python backend the script writes output_dir/{stem}.{ext}
+    # (because we pass --suffix ""). Rename to the caller-specified output_path if they differ.
     if backend.kind == "python" and proc.returncode == 0:
-        actual = output_path.parent / input_path.name
+        ext = output_path.suffix.lstrip(".") or "png"
+        actual = output_path.parent / (input_path.stem + "." + ext)
         if actual.exists() and actual != output_path:
             actual.rename(output_path)
 

@@ -17,20 +17,4 @@ def safe_output_path(dest_dir: Path, filename: str) -> Path:
 
 
 def placeholder_result(operation: str) -> str:
-    return f"[{operation}] Not implemented yet — placeholder only."
-
-
-def unique_output_path(dest_dir: Path, filename: str) -> Path:
-    """Return a path under dest_dir that does not exist, appending _N suffix if needed."""
-    dest_dir.mkdir(parents=True, exist_ok=True)
-    candidate = dest_dir / filename
-    if not candidate.exists():
-        return candidate
-    stem = Path(filename).stem
-    suffix = Path(filename).suffix
-    n = 1
-    while True:
-        candidate = dest_dir / f"{stem}_{n}{suffix}"
-        if not candidate.exists():
-            return candidate
-        n += 1
+    return f"[{operation}] Not yet implemented."

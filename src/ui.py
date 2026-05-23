@@ -44,7 +44,14 @@ input[type="range"] {
     font-weight: 500 !important;
     padding: 8px 18px !important;
     border-radius: 6px 6px 0 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
     transition: color 0.15s, background 0.15s !important;
+}
+.tab-nav button:hover,
+.tab-nav button:active {
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 /* ── Header ── */
@@ -163,6 +170,21 @@ button[disabled] {
     box-shadow: none !important;
 }
 
+/* ── Button depth, hover elevation, and pressed state ── */
+button:not([disabled]) {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22), 0 1px 2px rgba(0, 0, 0, 0.14) !important;
+    transition: box-shadow 150ms ease, transform 150ms ease !important;
+}
+button:not([disabled]):hover {
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.32), 0 2px 5px rgba(0, 0, 0, 0.18) !important;
+    transform: translateY(-1px) !important;
+}
+button:not([disabled]):active {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16) !important;
+    transform: translateY(0px) !important;
+    transition-duration: 60ms !important;
+}
+
 /* ── Batch placeholder ── */
 .batch-coming-soon {
     font-size: 12px;
@@ -180,6 +202,11 @@ button[disabled] {
     margin-top: 4px;
     border: 1px solid rgba(255, 255, 255, 0.06);
     background: rgba(0, 0, 0, 0.18);
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.info-card:hover {
+    border-color: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.20);
 }
 .info-metric {
     display: flex;
@@ -206,35 +233,44 @@ button[disabled] {
 .upscale-progress {
     position: relative;
     overflow: hidden;
-    border-radius: 22px;
-    height: 40px;
+    border-radius: 24px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
     font-weight: 600;
     color: #e2f7ff;
-    background: linear-gradient(90deg, #1e3a8a 0%, #0e7490 55%, #065f46 100%);
+    background: linear-gradient(90deg, #1a3570 0%, #0d6a84 50%, #064e38 100%);
+    background-size: 200% 100%;
     letter-spacing: 0.25px;
-    margin: 4px 0;
+    margin: 8px 0 4px;
     box-shadow: 0 2px 14px rgba(6, 182, 212, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.07);
     user-select: none;
+    transition: opacity 200ms ease;
+    animation: upscale-bg-shift 4s ease-in-out infinite alternate;
 }
 .upscale-progress::after {
     content: '';
     position: absolute;
     top: 0;
-    left: -60%;
-    width: 60%;
+    left: -50%;
+    width: 50%;
     height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 50%, transparent 100%);
-    animation: upscale-shimmer 1.8s ease-in-out infinite;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.13) 50%, transparent 100%);
+    animation: upscale-shimmer 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     pointer-events: none;
 }
 @keyframes upscale-shimmer {
-    0%   { left: -60%; }
+    0%   { left: -50%; }
     100% { left: 120%; }
 }
+@keyframes upscale-bg-shift {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* ── Success: dark text on light green — clear contrast on any monitor ── */
 .upscale-done {
     border-radius: 22px;
     height: 40px;
@@ -243,11 +279,12 @@ button[disabled] {
     justify-content: center;
     font-size: 13px;
     font-weight: 600;
-    color: #4ade80;
-    background: rgba(34, 197, 94, 0.08);
-    border: 1px solid rgba(34, 197, 94, 0.20);
-    margin: 4px 0;
+    color: #14532d;
+    background: rgba(187, 247, 208, 0.86);
+    border: 1px solid rgba(34, 197, 94, 0.38);
+    margin: 8px 0 4px;
     letter-spacing: 0.1px;
+    animation: status-fadein 220ms ease forwards;
 }
 .upscale-fail {
     border-radius: 22px;
@@ -260,8 +297,54 @@ button[disabled] {
     color: #f87171;
     background: rgba(239, 68, 68, 0.08);
     border: 1px solid rgba(239, 68, 68, 0.20);
-    margin: 4px 0;
+    margin: 8px 0 4px;
     letter-spacing: 0.1px;
+    animation: status-fadein 220ms ease forwards;
+}
+@keyframes status-fadein {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Log output — terminal style, visually quiet ── */
+.log-output textarea {
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+    background: #070b10 !important;
+    color: #5d7a90 !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ── Downloads section ── */
+.downloads-section {
+    margin-top: 12px;
+    padding: 14px 16px 12px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.04) 0%, rgba(6, 182, 212, 0.04) 100%);
+    border: 1px solid rgba(34, 197, 94, 0.12);
+}
+.downloads-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.downloads-icon {
+    font-size: 14px;
+    opacity: 0.7;
+}
+.downloads-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #4ade80;
+}
+.downloads-section .file-preview {
+    background: rgba(0, 0, 0, 0.25) !important;
+    border-radius: 6px !important;
 }
 """
 
@@ -322,11 +405,18 @@ def _input_image_info(img_path: str | None) -> str:
         return _empty_input_info()
 
 
-def _build_header_html() -> str:
+def _build_header_html(backend) -> str:
+    if backend.available:
+        badge_cls = "backend-ok"
+        badge_label = f"● {backend.kind}"
+    else:
+        badge_cls = "backend-none"
+        badge_label = "○ no backend"
+    badge = f'<span class="backend-badge {badge_cls}">{badge_label}</span>'
     return (
         '<div class="pixctl-header">'
         '<h1>pixctl</h1>'
-        '<div class="tagline">Local image processing toolkit · AI upscale · compress · resize</div>'
+        f'<div class="tagline">Local image processing toolkit · AI upscale · compress · resize &nbsp; {badge}</div>'
         '</div>'
     )
 
@@ -345,20 +435,22 @@ def _do_upscale(
     max_width_str: str,
     target_size_str: str,
 ):
-    """Generator — yields (img_out, log, out_info, btn_update, status) for live UI feedback."""
+    """Generator — yields (img_out, export_out, master_out, log, out_info, btn_update, status) for live UI feedback."""
 
     _BTN_IDLE = gr.update(interactive=True, value="Run Upscale")
 
     # Immediately disable button and clear stale output
-    yield None, "Starting...", _empty_output_info(), gr.update(interactive=False, value="Running..."), _status_processing("Starting upscale…")
+    yield None, None, None, "Preparing…", _empty_output_info(), gr.update(interactive=False, value="Processing…"), _status_processing("Preparing upscale pipeline…")
 
     backend = detect_backend(user_backend_path or None)
 
     if not img_path:
-        yield None, "No input image provided.", _empty_output_info(), _BTN_IDLE, _status_fail("No input image")
+        yield None, None, None, "No input image provided.", _empty_output_info(), _BTN_IDLE, _status_fail("No input image")
         return
     if not backend.available:
         yield (
+            None,
+            None,
             None,
             "Real-ESRGAN backend is required. Add a valid Real-ESRGAN folder or executable path.\n"
             "Examples: /path/to/Real-ESRGAN  or  /path/to/realesrgan-ncnn-vulkan\n"
@@ -378,13 +470,17 @@ def _do_upscale(
             scale = int(scale_str)
             input_size = input_path.stat().st_size
 
-            tmp_name = timestamped_filename(f"{input_path.stem}_x{scale}_raw", ".png")
-            tmp_path = TEMP_DIR / tmp_name
+            master_name = timestamped_filename(f"{input_path.stem}_x{scale}_master", ".png")
+            try:
+                master_path = safe_output_path(OUTPUTS["upscaled"], master_name)
+            except FileExistsError as exc:
+                result_bag[0] = (None, None, str(exc), _empty_output_info())
+                return
 
             run_result = run_upscale(
                 backend,
                 input_path,
-                tmp_path,
+                master_path,
                 model=model,
                 scale=scale,
                 face_enhance=face_enhance,
@@ -396,16 +492,14 @@ def _do_upscale(
                     lines.append(f"stderr: {run_result.stderr.strip()}")
                 if run_result.stdout:
                     lines.append(f"stdout: {run_result.stdout.strip()}")
-                result_bag[0] = (None, "\n".join(lines), _empty_output_info())
+                result_bag[0] = (None, None, "\n".join(lines), _empty_output_info())
                 return
 
-            out_name = timestamped_filename(f"{input_path.stem}_x{scale}", f".{fmt}")
+            export_name = timestamped_filename(f"{input_path.stem}_x{scale}_export", f".{fmt}")
             try:
-                output_path = safe_output_path(OUTPUTS["upscaled"], out_name)
+                export_path = safe_output_path(OUTPUTS["upscaled"], export_name)
             except FileExistsError as exc:
-                if tmp_path.exists():
-                    tmp_path.unlink()
-                result_bag[0] = (None, str(exc), _empty_output_info())
+                result_bag[0] = (None, None, str(exc), _empty_output_info())
                 return
 
             target_bytes = TARGET_SIZES.get(target_size_str) if auto_compress else None
@@ -413,8 +507,8 @@ def _do_upscale(
 
             try:
                 compress_result = compress_image(
-                    input_path=tmp_path,
-                    output_path=output_path,
+                    input_path=master_path,
+                    output_path=export_path,
                     fmt=fmt,
                     quality=quality,
                     max_width=max_width,
@@ -422,33 +516,33 @@ def _do_upscale(
                     strip_metadata=False,
                 )
             except Exception as exc:
-                result_bag[0] = (None, f"Post-process error: {exc}", _empty_output_info())
+                result_bag[0] = (None, None, f"Post-process error: {exc}", _empty_output_info())
                 return
-            finally:
-                if tmp_path.exists():
-                    tmp_path.unlink()
 
             if user_backend_path:
                 save_local_config({"realesrgan_path": user_backend_path})
 
             in_kb = input_size / 1024
             out_kb = compress_result["output_size"] / 1024
+            master_kb = master_path.stat().st_size / 1024
             ratio = out_kb / in_kb if in_kb > 0 else 1.0
             log = (
                 f"Elapsed: {run_result.duration:.0f}s\n"
-                f"Saved:  {compress_result['output_path']}\n"
-                f"Before: {in_kb:.1f} KB  →  After: {out_kb:.1f} KB\n"
+                f"Upscaled master: {master_path}\n"
+                f"Optimized export: {compress_result['output_path']}\n"
+                f"Before: {in_kb:.1f} KB  →  Master: {master_kb:.1f} KB  →  Export: {out_kb:.1f} KB\n"
                 f"{compress_result['log']}"
             )
             ratio_cls = "good" if ratio < 1.0 else ""
             info_html = _info_card_html([
-                ("Output size", f"{out_kb:.1f} KB", ""),
+                ("Master size", f"{master_kb:.1f} KB", ""),
+                ("Export size", f"{out_kb:.1f} KB", ""),
                 ("vs input", f"{ratio * 100:.0f}%", ratio_cls),
                 ("Scale", f"×{scale}", ""),
                 ("Format", fmt.upper(), "dim"),
                 ("Duration", f"{run_result.duration:.1f}s", "dim"),
             ])
-            result_bag[0] = (str(compress_result["output_path"]), log, info_html)
+            result_bag[0] = (str(compress_result["output_path"]), str(master_path), log, info_html)
         except Exception as exc:
             result_bag[1] = exc
 
@@ -464,23 +558,25 @@ def _do_upscale(
             break
         yield (
             gr.update(),
+            gr.update(),
+            gr.update(),
             f"Running... {elapsed:.0f}s elapsed",
             gr.update(),
-            gr.update(interactive=False, value=f"Running... ({int(elapsed)}s)"),
-            _status_processing(f"Processing… elapsed: {int(elapsed)}s"),
+            gr.update(interactive=False, value=f"Processing… {int(elapsed)}s"),
+            _status_processing(f"Upscaling in progress · {int(elapsed)}s"),
         )
 
     # Thread finished — surface result or exception in the log
     elapsed = time.monotonic() - t0
     if result_bag[1] is not None:
-        yield None, f"Error: {result_bag[1]}", _empty_output_info(), _BTN_IDLE, _status_fail(f"Failed after {elapsed:.1f}s")
+        yield None, None, None, f"Error: {result_bag[1]}", _empty_output_info(), _BTN_IDLE, _status_fail(f"Upscale failed · {elapsed:.1f}s")
         return
 
-    out_path, log, info_html = result_bag[0]
-    yield out_path, log, info_html, _BTN_IDLE, _status_done(f"Completed in {elapsed:.1f}s")
+    out_path, master_path_str, log, info_html = result_bag[0]
+    yield out_path, out_path, master_path_str, log, info_html, _BTN_IDLE, _status_done(f"Enhancement complete · {elapsed:.1f}s")
 
 
-def _upscale_tab() -> gr.Tab:
+def _upscale_tab(backend) -> gr.Tab:
     with gr.Tab("Upscale") as tab:
         gr.HTML(
             '<div class="workflow-hint">'
@@ -499,6 +595,15 @@ def _upscale_tab() -> gr.Tab:
                 in_info = gr.HTML(_empty_input_info())
             with gr.Column():
                 img_out = gr.Image(label="Output preview", interactive=False)
+                with gr.Group(elem_classes=["downloads-section"]):
+                    gr.HTML(
+                        '<div class="downloads-header">'
+                        '<span class="downloads-icon">&#x2913;</span>'
+                        '<span class="downloads-title">Downloads</span>'
+                        '</div>'
+                    )
+                    export_out = gr.File(label="Optimized export", interactive=False)
+                    master_out = gr.File(label="Full-quality master (PNG)", interactive=False)
                 out_info = gr.HTML(_empty_output_info())
         with gr.Row():
             model = gr.Dropdown(
@@ -547,15 +652,24 @@ def _upscale_tab() -> gr.Tab:
             info="Optional. Leave empty to auto-detect or use REAL_ESRGAN_PATH.",
             value=_saved_realesrgan_path,
         )
-        run_btn = gr.Button("Run Upscale", variant="primary")
+        if not backend.available:
+            gr.HTML(
+                '<div class="backend-unavailable-notice">'
+                '<span class="bun-icon">⚠</span>'
+                '<div class="bun-body">'
+                '<span class="bun-title">No Real-ESRGAN backend found</span>'
+                '<span class="bun-detail">Set REAL_ESRGAN_PATH or enter a path below to enable upscaling.</span>'
+                '</div></div>'
+            )
+        run_btn = gr.Button("Run Upscale", variant="primary", interactive=backend.available)
         status_out = gr.HTML("")
-        log_out = gr.Textbox(label="Log", interactive=False, lines=5)
+        log_out = gr.Textbox(label="Log", interactive=False, lines=5, elem_classes=["log-output"])
 
         img_in.change(fn=_input_image_info, inputs=img_in, outputs=in_info)
         run_btn.click(
             fn=_do_upscale,
             inputs=[backend_path_input, img_in, scale, model, face_enhance, fmt, quality, auto_compress, max_width, target_size],
-            outputs=[img_out, log_out, out_info, run_btn, status_out],
+            outputs=[img_out, export_out, master_out, log_out, out_info, run_btn, status_out],
             show_progress="hidden",
         )
     return tab
@@ -659,7 +773,7 @@ def _compress_tab() -> gr.Tab:
             info="Remove embedded metadata to reduce file size and privacy exposure.",
         )
         run_btn = gr.Button("Compress / Resize", variant="primary")
-        log_out = gr.Textbox(label="Log", interactive=False, lines=4)
+        log_out = gr.Textbox(label="Log", interactive=False, lines=4, elem_classes=["log-output"])
 
         img_in.change(fn=_input_image_info, inputs=img_in, outputs=in_info)
         run_btn.click(
@@ -691,7 +805,7 @@ def _batch_tab() -> gr.Tab:
             info="Absolute path to the folder containing images to process.",
         )
         run_btn = gr.Button("Run Batch", variant="primary")
-        output = gr.Textbox(label="Result", interactive=False, lines=4)
+        output = gr.Textbox(label="Result", interactive=False, lines=4, elem_classes=["log-output"])
         run_btn.click(
             fn=lambda _folder: placeholder_result("Batch"),
             inputs=folder,
@@ -703,11 +817,12 @@ def _batch_tab() -> gr.Tab:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def build_ui() -> gr.Blocks:
-    with gr.Blocks(
-        title="pixctl",
-    ) as demo:
-        gr.HTML(_build_header_html())
-        _upscale_tab()
+    from src.config import load_local_config
+    _saved_path = load_local_config().get("realesrgan_path", "")
+    _initial_backend = detect_backend(_saved_path or None)
+    with gr.Blocks(title="pixctl") as demo:
+        gr.HTML(_build_header_html(_initial_backend))
+        _upscale_tab(_initial_backend)
         _compress_tab()
         _batch_tab()
     return demo
