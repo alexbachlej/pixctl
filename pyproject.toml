@@ -8,6 +8,10 @@ version = "0.1.0"
 description = "Local Real-ESRGAN UI with compression workflow"
 requires-python = ">=3.9"
 license = { text = "MIT" }
+dependencies = [
+    "gradio>=4.0.0",
+    "Pillow>=10.0.0",
+]
 
 [[project.authors]]
 name = "Alex Cezary Bachlej"

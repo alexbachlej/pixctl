@@ -51,10 +51,17 @@ Gradio web UI for upscaling, compression, format conversion, and metadata stripp
 
 ## Requirements
 
+**pixctl itself**
 - Python 3.9+
-- A Real-ESRGAN backend (ncnn-vulkan binary or `inference_realesrgan.py` Python script)
+- `gradio >= 4.0` and `Pillow >= 10.0` — installed automatically by `start.sh`
 
-Python dependencies (`gradio`, `Pillow`) are installed automatically by `start.sh`.
+**Upscale tab** *(requires one of the following, installed separately)*
+- `realesrgan-ncnn-vulkan` binary — fastest, no extra Python deps, no face enhancement
+- Real-ESRGAN Python project (`inference_realesrgan.py`) — supports face enhancement via GFPGAN
+
+The **Compress / Resize tab** works without any backend.
+
+See [docs/REAL_ESRGAN_SETUP.md](docs/REAL_ESRGAN_SETUP.md) for backend installation.
 
 ---
 
