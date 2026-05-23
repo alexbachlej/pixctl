@@ -10,7 +10,7 @@ Gradio web UI for upscaling, compression, format conversion, and metadata stripp
 
 ## Demo
 
-[![pixctl — upscale comparison](assets/screenshots/demo1.webp)](https://youtu.be/I6z3NQbGmj8)
+[![pixctl — upscale comparison](assets/screenshots/Screenshot%20from%202026-05-23%2021-33-57.webp)](https://youtu.be/I6z3NQbGmj8)
 
 [Watch on YouTube →](https://youtu.be/I6z3NQbGmj8)
 
