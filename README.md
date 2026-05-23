@@ -1,10 +1,31 @@
 # pixctl
 
-Lightweight local AI image upscaler UI built on [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). No accounts, no cloud, no telemetry.
+Lightweight local AI image upscaler — no accounts, no cloud, no telemetry.
 
-Provides a Gradio web UI for upscaling, compression, format conversion, and metadata stripping — all processed locally.
+Gradio web UI for upscaling, compression, format conversion, and metadata stripping, powered by [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Runs entirely on your machine.
 
 > **Real-ESRGAN is not bundled.** You must install an external backend (ncnn-vulkan binary or Python script) and point pixctl at it. See [docs/REAL_ESRGAN_SETUP.md](docs/REAL_ESRGAN_SETUP.md).
+
+---
+
+## Demo
+
+[![pixctl — upscale comparison](assets/screenshots/demo1.webp)](https://youtu.be/I6z3NQbGmj8)
+
+[Watch on YouTube →](https://youtu.be/I6z3NQbGmj8)
+
+---
+
+## Screenshots
+
+![pixctl UI — upscale tab with before/after and output stats](assets/screenshots/Screenshot%20from%202026-05-22%2015-46-05.webp)
+
+<table>
+<tr>
+<td><img src="assets/screenshots/demo5.webp" alt="Pixel-level detail recovery at 4×"></td>
+<td><img src="assets/screenshots/Screenshot%20from%202026-05-23%2021-33-57.webp" alt="Before/after — alternate subject"></td>
+</tr>
+</table>
 
 ---
 
@@ -112,3 +133,7 @@ temp/           ← Transient working files (cleared on startup)
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+<sub>Development orchestrated with RailTaskLite.</sub>
