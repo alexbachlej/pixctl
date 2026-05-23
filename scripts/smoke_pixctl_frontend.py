@@ -134,11 +134,11 @@ def _call_do_upscale(**overrides):
 
 def _test_upscale_no_image():
     result = _call_do_upscale(img_path=None, user_backend_path="")
-    assert isinstance(result, tuple) and len(result) == 6, "Expected 6-tuple"
+    assert isinstance(result, tuple) and len(result) == 7, "Expected 7-tuple"
     assert result[0] is None, "Expected None output image for missing input"
-    assert result[1] is None, "Expected None master path for missing input"
-    assert isinstance(result[2], str), "Expected str log"
-    assert "No input image" in result[2], f"Unexpected log: {result[2]!r}"
+    assert result[2] is None, "Expected None master path for missing input"
+    assert isinstance(result[3], str), "Expected str log"
+    assert "No input image" in result[3], f"Unexpected log: {result[3]!r}"
 
 _check("_do_upscale(img=None): returns (None, str, str) — no exception", _test_upscale_no_image)
 
@@ -147,8 +147,8 @@ def _test_upscale_empty_backend():
     tmp = _make_test_image()
     try:
         result = _call_do_upscale(img_path=tmp, user_backend_path="")
-        assert isinstance(result, tuple) and len(result) == 6, "Expected 6-tuple"
-        assert isinstance(result[2], str), "Expected str log"
+        assert isinstance(result, tuple) and len(result) == 7, "Expected 7-tuple"
+        assert isinstance(result[3], str), "Expected str log"
     finally:
         Path(tmp).unlink(missing_ok=True)
 
@@ -162,8 +162,8 @@ def _test_upscale_invalid_backend():
             img_path=tmp,
             user_backend_path="/nonexistent/realesrgan",
         )
-        assert isinstance(result, tuple) and len(result) == 6, "Expected 6-tuple"
-        assert isinstance(result[2], str), "Expected str log"
+        assert isinstance(result, tuple) and len(result) == 7, "Expected 7-tuple"
+        assert isinstance(result[3], str), "Expected str log"
     finally:
         Path(tmp).unlink(missing_ok=True)
 
