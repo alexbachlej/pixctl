@@ -45,3 +45,6 @@ Thumbs.db
 .coverage
 htmlcov/
 coverage.xml
+
+# Scratch / audit artefacts
+rc tests

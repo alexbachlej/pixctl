@@ -315,7 +315,7 @@ def run_upscale(
         ext = output_path.suffix.lstrip(".") or "png"
         actual = output_path.parent / (input_path.stem + "." + ext)
         if actual != output_path and actual.exists():
-            actual.rename(output_path)
+            shutil.move(str(actual), str(output_path))
 
     success = proc.returncode == 0 and output_path.exists()
     return RunResult(

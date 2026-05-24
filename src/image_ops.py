@@ -82,21 +82,24 @@ def compress_image(
     pil_fmt = _PIL_FORMAT[fmt.lower()]
 
     try:
-        orig = Image.open(input_path)
+        with Image.open(input_path) as orig:
+            orig.load()
+            input_size = input_path.stat().st_size
+
+            extra: dict = {}
+            if not strip_metadata and pil_fmt == "JPEG":
+                exif = orig.info.get("exif")
+                if exif:
+                    extra["exif"] = exif
+
+            img = orig
+            if max_width is not None:
+                img = _resize_to_width(img, max_width)
+            img = _to_saveable(img, pil_fmt)
+            if img is orig:
+                img = img.copy()
     except UnidentifiedImageError:
         raise ValueError(f"Unsupported image format: {input_path.name}")
-    input_size = input_path.stat().st_size
-
-    extra: dict = {}
-    if not strip_metadata and pil_fmt == "JPEG":
-        exif = orig.info.get("exif")
-        if exif:
-            extra["exif"] = exif
-
-    img = orig
-    if max_width is not None:
-        img = _resize_to_width(img, max_width)
-    img = _to_saveable(img, pil_fmt)
 
     log_lines: list[str] = []
     data: bytes | None = None

@@ -68,7 +68,7 @@ See [docs/REAL_ESRGAN_SETUP.md](docs/REAL_ESRGAN_SETUP.md) for backend installat
 ## Quick Start
 
 ```bash
-git clone <repo-url> pixctl
+git clone https://github.com/Inthrabachlej/pixctl pixctl
 cd pixctl
 ./start.sh
 ```
