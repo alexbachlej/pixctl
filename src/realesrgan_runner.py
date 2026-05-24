@@ -284,14 +284,15 @@ def run_upscale(
     cmd = _build_command(backend, input_path, output_path, model, scale, face_enhance)
     cwd = str(backend.cwd) if backend.cwd else None
     t0 = time.monotonic()
+    _TIMEOUT = 1800
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd, timeout=1800)
+        proc = subprocess.run(cmd, capture_output=True, text=True, cwd=cwd, timeout=_TIMEOUT)
     except subprocess.TimeoutExpired:
         duration = time.monotonic() - t0
         return RunResult(
             success=False,
             stdout="",
-            stderr="Upscale process timed out after 300s.",
+            stderr=f"Upscale process timed out after {_TIMEOUT}s.",
             returncode=-1,
             duration=duration,
         )
@@ -307,11 +308,13 @@ def run_upscale(
     duration = time.monotonic() - t0
 
     # For the python backend the script writes output_dir/{stem}.{ext}
-    # (because we pass --suffix ""). Rename to the caller-specified output_path if they differ.
+    # (because we pass --suffix ""). Rename to the caller-specified output_path when they differ.
+    # Check path equality first (cheap) to short-circuit before the filesystem call so that the
+    # "actual == output_path" case (file already in place) is never blocked by a stale exists().
     if backend.kind == "python" and proc.returncode == 0:
         ext = output_path.suffix.lstrip(".") or "png"
         actual = output_path.parent / (input_path.stem + "." + ext)
-        if actual.exists() and actual != output_path:
+        if actual != output_path and actual.exists():
             actual.rename(output_path)
 
     success = proc.returncode == 0 and output_path.exists()

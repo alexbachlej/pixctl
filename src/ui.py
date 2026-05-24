@@ -423,6 +423,11 @@ def _build_header_html(backend) -> str:
 
 # ── Upscale tab ───────────────────────────────────────────────────────────────
 
+def _refresh_upscale_btn(user_path: str):
+    available = detect_backend(user_path.strip() or None).available
+    return gr.update(interactive=available)
+
+
 def _do_upscale(
     user_backend_path: str,
     img_path: str | None,
@@ -666,6 +671,7 @@ def _upscale_tab(backend) -> gr.Tab:
         log_out = gr.Textbox(label="Log", interactive=False, lines=5, elem_classes=["log-output"])
 
         img_in.change(fn=_input_image_info, inputs=img_in, outputs=in_info)
+        backend_path_input.change(fn=_refresh_upscale_btn, inputs=backend_path_input, outputs=run_btn)
         run_btn.click(
             fn=_do_upscale,
             inputs=[backend_path_input, img_in, scale, model, face_enhance, fmt, quality, auto_compress, max_width, target_size],

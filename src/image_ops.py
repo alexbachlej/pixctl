@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 MAX_WIDTHS: dict[str, int | None] = {
     "original": None,
@@ -81,7 +81,10 @@ def compress_image(
     output_path = Path(output_path)
     pil_fmt = _PIL_FORMAT[fmt.lower()]
 
-    orig = Image.open(input_path)
+    try:
+        orig = Image.open(input_path)
+    except UnidentifiedImageError:
+        raise ValueError(f"Unsupported image format: {input_path.name}")
     input_size = input_path.stat().st_size
 
     extra: dict = {}
