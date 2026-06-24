@@ -1,6 +1,6 @@
 # pixctl
 
-Lightweight local AI image upscaler — no accounts, no cloud, no telemetry.
+CLI image optimization and upscaling toolkit with Real-ESRGAN support. No accounts, no cloud, no telemetry.
 
 Gradio web UI for upscaling, compression, format conversion, and metadata stripping, powered by [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Runs entirely on your machine.
 
