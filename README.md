@@ -19,6 +19,7 @@ pixctl can be evaluated as a normal software project: it has source code, tests,
 But its stronger role is as a proof artifact for RailTaskLite. It demonstrates that the workflow can turn a product goal into working software through controlled AI execution rather than unbounded prompt-and-pray coding.
 
 The important claim is repeatability: scoped tasks, allowed files, audit batches, stop gates, operator decisions, and visible artifacts.
+
 CLI image optimization and upscaling toolkit with Real-ESRGAN support. No accounts, no cloud, no telemetry.
 
 Gradio web UI for upscaling, compression, format conversion, and metadata stripping, powered by [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Runs entirely on your machine.
