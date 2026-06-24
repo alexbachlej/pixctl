@@ -1,5 +1,7 @@
 # pixctl
 
+[![CI](https://github.com/alexbachlej/pixctl/actions/workflows/ci.yml/badge.svg)](https://github.com/alexbachlej/pixctl/actions/workflows/ci.yml)
+
 CLI image optimization and upscaling toolkit with Real-ESRGAN support. No accounts, no cloud, no telemetry.
 
 Gradio web UI for upscaling, compression, format conversion, and metadata stripping, powered by [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Runs entirely on your machine.
@@ -44,8 +46,6 @@ Gradio web UI for upscaling, compression, format conversion, and metadata stripp
 - Max-width presets: 1280, 1920, 2560, 3840 px
 - Target file size presets: 1 MB, 2 MB, 5 MB, 10 MB
 - EXIF and metadata stripping
-
-**Batch Folder Mode** — UI skeleton present; processing logic not yet implemented.
 
 ---
 
@@ -140,6 +140,12 @@ temp/           ← Transient working files (cleared on startup)
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+## Roadmap
+
+- **Batch Folder Mode** — process an entire folder in one pass (UI tab exists; processing pipeline in progress)
 
 ---
 
