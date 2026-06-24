@@ -2,6 +2,23 @@
 
 [![CI](https://github.com/alexbachlej/pixctl/actions/workflows/ci.yml/badge.svg)](https://github.com/alexbachlej/pixctl/actions/workflows/ci.yml)
 
+<!-- RAILTASKLITE_PROOF_ARTIFACT_START -->
+> **RailTaskLite proof artifact**
+>
+> pixctl is a practical local image optimization and upscaling tool. It is also an inspectable output artifact produced through **RailTaskLite**, my controlled AI execution workflow.
+>
+> The point of this repository is not only the tool itself. The code is public so you can inspect the quality of software that a constrained AI execution system can produce when work is broken into scoped batches, reviewed through audit gates, repaired through feedback loops, and packaged into a usable project.
+>
+> **pixctl is the output. RailTaskLite is the execution system behind it.**
+<!-- RAILTASKLITE_PROOF_ARTIFACT_END -->
+
+## Why this repository exists
+
+pixctl can be evaluated as a normal software project: it has source code, tests, packaging, documentation, and a usable interface.
+
+But its stronger role is as a proof artifact for RailTaskLite. It demonstrates that the workflow can turn a product goal into working software through controlled AI execution rather than unbounded prompt-and-pray coding.
+
+The important claim is repeatability: scoped tasks, allowed files, audit batches, stop gates, operator decisions, and visible artifacts.
 CLI image optimization and upscaling toolkit with Real-ESRGAN support. No accounts, no cloud, no telemetry.
 
 Gradio web UI for upscaling, compression, format conversion, and metadata stripping, powered by [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN). Runs entirely on your machine.
