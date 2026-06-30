@@ -16,7 +16,7 @@ _UPSCALE_MODELS = [
     "realesr-animevideov3",
 ]
 
-THEME = gr.themes.Ocean()
+THEME = gr.themes.Soft()
 
 CUSTOM_CSS = """
 /* ── pixctl · creator-tool theme ── */
@@ -826,7 +826,7 @@ def build_ui() -> gr.Blocks:
     from src.config import load_local_config
     _saved_path = load_local_config().get("realesrgan_path", "")
     _initial_backend = detect_backend(_saved_path or None)
-    with gr.Blocks(title="pixctl") as demo:
+    with gr.Blocks(title="pixctl", theme=THEME, css=CUSTOM_CSS) as demo:
         gr.HTML(_build_header_html(_initial_backend))
         _upscale_tab(_initial_backend)
         _compress_tab()

@@ -1,9 +1,19 @@
 import os
 import time
 
+# gradio-client 1.3.0 crashes when a JSON schema field is a bool (e.g. additionalProperties:true).
+# Patch: return "Any" for any non-dict schema; recursive calls go through this guard too.
+import gradio_client.utils as _gcu
+def _gcu_safe(schema, defs, _orig=_gcu._json_schema_to_python_type):
+    if not isinstance(schema, dict):
+        return "Any"
+    return _orig(schema, defs)
+_gcu._json_schema_to_python_type = _gcu_safe
+del _gcu
+
 from src.config import HOST, init_dirs, resolve_port
 from src.realesrgan_runner import detect_backend
-from src.ui import CUSTOM_CSS, THEME, build_ui
+from src.ui import build_ui
 
 if __name__ == "__main__":
     t0 = time.monotonic()
@@ -39,6 +49,4 @@ if __name__ == "__main__":
         server_port=port,
         quiet=True,
         inbrowser=inbrowser,
-        theme=THEME,
-        css=CUSTOM_CSS,
     )

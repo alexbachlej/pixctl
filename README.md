@@ -93,7 +93,7 @@ cd pixctl
 
 Opens at **http://127.0.0.1:7860** (auto-increments port if busy).
 
-`start.sh` creates `.venv`, installs dependencies from `requirements.txt`, and launches the app. Manual setup:
+`start.sh` creates `.venv` on first run, installs dependencies only when `requirements.txt` changes, and launches the app. Manual setup:
 
 ```bash
 python3 -m venv .venv
